@@ -150,3 +150,58 @@ def adjust_learning_rate(optimizer, learning_rate):
         param_group['lr'] = learning_rate
 
     return
+
+#%% CUTEst PyTorch Interface
+    
+class CUTEstFunction(torch.autograd.Function):
+    """
+    Converts CUTEst problem using PyCUTEst to PyTorch function.
+
+    Implemented by: Hao-Jun Michael Shi and Dheevatsa Mudigere
+    Last edited 9/21/18.
+
+    """
+
+    @staticmethod
+    def forward(ctx, input, problem):
+        x = input.clone().detach().numpy()
+        obj, grad = problem.obj(x, gradient=True)
+        ctx.save_for_backward(torch.tensor(grad, dtype=torch.float))
+        return torch.tensor(obj, dtype=torch.float)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        grad, = ctx.saved_tensors
+        return grad, None
+
+class CUTEstProblem(torch.nn.Module):
+    """
+    Converts CUTEst problem to torch neural network module.
+
+    Implemented by: Hao-Jun Michael Shi and Dheevatsa Mudigere
+    Last edited 9/21/18.
+
+    Inputs:
+        problem (callable): CUTEst problem interfaced through PyCUTEst
+
+    """
+
+    def __init__(self, problem):
+        super(CUTEstProblem, self).__init__()
+        # get initialization
+        x = torch.tensor(problem.x0, dtype=torch.float)
+        x.requires_grad_()
+
+        # store variables and problem
+        self.variables = torch.nn.Parameter(x)
+        self.problem = problem
+
+    def forward(self):
+        model = CUTEstFunction.apply
+        return model(self.variables, self.problem)
+
+    def grad(self):
+        return self.variables.grad
+
+    def x(self):
+        return self.variables
