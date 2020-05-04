@@ -7,7 +7,6 @@
 
 ### Ссылки:
 - [Progress Board][Board]
-- [Список проектов][Themes]
 
 
 
