@@ -98,6 +98,7 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
+
 # SageMath parsed files
 *.sage.py
 
@@ -130,3 +131,7 @@ dmypy.json
 
 # Datasets
 PATH_TO_STORE_*/
+
+.DS_Store
+.idea
+

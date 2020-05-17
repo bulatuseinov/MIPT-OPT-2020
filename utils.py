@@ -3,29 +3,21 @@ import torch
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-#%% Compute Statistics (Training Loss, Test Loss, Test Accuracy)
 
 def compute_stats(X_train, y_train, X_test, y_test, opfun, accfun, ghost_batch=128):
     """
     Computes training loss, test loss, and test accuracy efficiently.
 
-    Implemented by: Hao-Jun Michael Shi and Dheevatsa Mudigere
-    Last edited 8/29/18.
-
-    Inputs:
-        X_train (nparray): set of training examples
-        y_train (nparray): set of training labels
-        X_test (nparray): set of test examples
-        y_test (nparray): set of test labels
-        opfun (callable): computes forward pass over network over sample Sk
-        accfun (callable): computes accuracy against labels
-        ghost_batch (int): maximum size of effective batch (default: 128)
-
-    Output:
-        train_loss (float): training loss
-        test_loss (float): test loss
-        test_acc (float): test accuracy
-
+    :param X_train: set of training examples
+    :param y_train: set of training labels
+    :param X_test: set of test examples
+    :param y_test: set of test labels
+    :param opfun: computes forward pass over network over sample Sk
+    :param accfun: computes accuracy against labels
+    :param ghost_batch: maximum size of effective batch (default: 128)
+    :return train_loss: training loss
+    :return test_loss: test loss
+    :return test_acc: test accuracy
     """
 
     # compute test loss and test accuracy
@@ -36,7 +28,7 @@ def compute_stats(X_train, y_train, X_test, y_test, opfun, accfun, ghost_batch=1
     for smpl in np.array_split(np.random.permutation(range(X_test.shape[0])), int(X_test.shape[0]/ghost_batch)):
 
         # define test set targets
-        if(torch.cuda.is_available()):
+        if torch.cuda.is_available():
             test_tgts = torch.from_numpy(y_test[smpl]).cuda().long().squeeze()
         else:
             test_tgts = torch.from_numpy(y_test[smpl]).long().squeeze()
@@ -45,7 +37,7 @@ def compute_stats(X_train, y_train, X_test, y_test, opfun, accfun, ghost_batch=1
         testops = opfun(X_test[smpl])
 
         # accumulate weighted test loss and test accuracy
-        if(torch.cuda.is_available()):
+        if torch.cuda.is_available():
             test_loss += F.cross_entropy(testops, test_tgts).cpu().item()*(len(smpl)/X_test.shape[0])
         else:
             test_loss += F.cross_entropy(testops, test_tgts).item()*(len(smpl)/X_test.shape[0])
@@ -59,7 +51,7 @@ def compute_stats(X_train, y_train, X_test, y_test, opfun, accfun, ghost_batch=1
     for smpl in np.array_split(np.random.permutation(range(X_train.shape[0])), int(X_test.shape[0]/ghost_batch)):
 
         # define training set targets
-        if(torch.cuda.is_available()):
+        if torch.cuda.is_available():
             train_tgts = torch.from_numpy(y_train[smpl]).cuda().long().squeeze()
         else:
             train_tgts = torch.from_numpy(y_train[smpl]).long().squeeze()
@@ -68,7 +60,7 @@ def compute_stats(X_train, y_train, X_test, y_test, opfun, accfun, ghost_batch=1
         trainops = opfun(X_train[smpl])
 
         # accumulate weighted training loss
-        if(torch.cuda.is_available()):
+        if torch.cuda.is_available():
             train_loss += F.cross_entropy(trainops, train_tgts).cpu().item()*(len(smpl)/X_train.shape[0])
         else:
             train_loss += F.cross_entropy(trainops, train_tgts).item()*(len(smpl)/X_train.shape[0])
@@ -76,28 +68,21 @@ def compute_stats(X_train, y_train, X_test, y_test, opfun, accfun, ghost_batch=1
     return train_loss, test_loss, test_acc
 
 
-#%% Compute Objective and Gradient Helper Function
+# Compute Objective and Gradient Helper Function
 
 def get_grad(optimizer, X_Sk, y_Sk, opfun, ghost_batch=128, return_=True):
     """
     Computes objective and gradient of neural network over data sample.
 
-    Implemented by: Hao-Jun Michael Shi and Dheevatsa Mudigere
-    Last edited 8/29/18.
-
-    Inputs:
-        optimizer (Optimizer): the PBQN optimizer
-        X_Sk (nparray): set of training examples over sample Sk
-        y_Sk (nparray): set of training labels over sample Sk
-        opfun (callable): computes forward pass over network over sample Sk
-        ghost_batch (int): maximum size of effective batch (default: 128)
-
-    Outputs:
-        grad (tensor): stochastic gradient over sample Sk
-        obj (tensor): stochastic function value over sample Sk
-
+    :param optimizer: the PBQN optimizer
+    :param X_Sk: set of training examples over sample Sk
+    :param y_Sk: set of training labels over sample Sk
+    :param opfun: computes forward pass over network over sample Sk
+    :param ghost_batch: maximum size of effective batch (default: 128)
+    :param return_: util use
+    :return grad: stochastic gradient over sample Sk
+    :return obj: stochastic function value over sample Sk
     """
-
     if(torch.cuda.is_available()):
         obj = torch.tensor(0, dtype=torch.float).cuda()
     else:
@@ -132,7 +117,6 @@ def get_grad(optimizer, X_Sk, y_Sk, opfun, ghost_batch=128, return_=True):
 
         return grad, obj
 
-#%% Adjusts Learning Rate Helper Function
 
 def adjust_learning_rate(optimizer, learning_rate):
     """
@@ -151,8 +135,7 @@ def adjust_learning_rate(optimizer, learning_rate):
 
     return
 
-#%% CUTEst PyTorch Interface
-    
+
 class CUTEstFunction(torch.autograd.Function):
     """
     Converts CUTEst problem using PyCUTEst to PyTorch function.
@@ -173,6 +156,7 @@ class CUTEstFunction(torch.autograd.Function):
     def backward(ctx, grad_output):
         grad, = ctx.saved_tensors
         return grad, None
+
 
 class CUTEstProblem(torch.nn.Module):
     """

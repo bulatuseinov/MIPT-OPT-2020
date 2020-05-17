@@ -26,6 +26,7 @@ class BB(Optimizer):
                  max_lr=10.0,
                  weight_decay=0.,
                  ):
+
         assert lr > 0.0, ValueError("Invalid initial learning rate: {}".format(lr))
         assert steps > 0, ValueError("Invalid steps: {}".format(steps))
         assert 0.0 < beta <= 1.0, ValueError("Invalid beta value: {}".format(beta))
@@ -49,11 +50,10 @@ class BB(Optimizer):
         self._params = self.param_groups[0]['params']
 
     def step(self, closure=None):
-        """Performs a single optimization step.
-
-        Arguments:
-            closure (callable, optional): A closure that reevaluates the net
-                and returns the loss.
+        """
+        Performs a single optimization step.
+        :param closure: A closure that reevaluates the net and returns the loss.
+        :return: None
         """
 
         loss = None
