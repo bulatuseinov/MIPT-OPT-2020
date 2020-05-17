@@ -7,7 +7,6 @@
 
 ### Ссылки:
 - [Progress Board][Board]
-- [Список проектов][Themes]
 
 
 
@@ -16,4 +15,3 @@
 [//]: # (This actually is the most platform independent comment)
 
   [Board]: <https://columns.me/mipt_opt_2020/mipt-opt-2020-vas>
-  [Themes]: <https://dpqbarxjhc74k.cloudfront.net/uploads/file/8835/VuTLJL4ndLUDGugxheUvybbK.pdf>
