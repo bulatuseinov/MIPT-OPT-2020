@@ -3,7 +3,7 @@
 ### Spring 2020
 ### Authors:
 - [Alexander Zhogov][Sasha]
-- [Mihail Sysak][Miha]
+- [Mikhail Sysak][Miha]
 - [Bulat Useinov][Bulat]
 ### Academic supervisor:
 - [Alexandr Katrutsa][amkatrutsa]
