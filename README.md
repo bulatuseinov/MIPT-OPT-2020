@@ -5,6 +5,8 @@
 - [Alexander Zhogov][Sasha]
 - [Mihail Sysak][Miha]
 - [Bulat Useinov][Bulat]
+### Academic supervisor:
+- [Alexandr Katrutsa][amkatrutsa]
 
 In this [article][paper], we tried to demonstrate the suitability of **Quasi Newton** optimization methods for **Deep Learning** problems. We conducted a series of experiments and compared different approaches of optimization with each other.
 
@@ -16,6 +18,7 @@ In this [article][paper], we tried to demonstrate the suitability of **Quasi New
   [Sasha]: <https://github.com/zhog96/>
   [Miha]: <https://github.com/sysak-ma/>
   [Bulat]: <https://github.com/bulatuseinov/>
+  [amkatrutsa]: <https://github.com/amkatrutsa/>
   [paper]: <https://github.com/bulatuseinov/MIPT-OPT-2020/blob/master/MIPT_OPT_2020.pdf>
   
   
